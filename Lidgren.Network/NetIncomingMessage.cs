@@ -19,12 +19,13 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Net;
 using System.Diagnostics;
+using Lidgren.Network;
 
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Phoesion.Network
 {
 	/// <summary>
 	/// Incoming message either sent from a remote peer or generated within the library

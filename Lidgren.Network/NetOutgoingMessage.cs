@@ -19,8 +19,9 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 using System;
 using System.Diagnostics;
+using Lidgren.Network;
 
-namespace Lidgren.Network
+namespace Phoesion.Network
 {
 	/// <summary>
 	/// Outgoing message used to send data to remote peer(s)

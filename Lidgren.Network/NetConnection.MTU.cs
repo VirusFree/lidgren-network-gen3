@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Lidgren.Network;
+using System;
 
-namespace Lidgren.Network
+namespace Phoesion.Network
 {
 	public partial class NetConnection  
 	{

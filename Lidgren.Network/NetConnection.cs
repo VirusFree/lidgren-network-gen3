@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Phoesion.Network;
+using System;
 using System.Net;
 using System.Threading;
 using System.Diagnostics;
+using Lidgren.Network;
 
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
 #endif
 
-namespace Lidgren.Network
+namespace Phoesion.Network
 {
 	/// <summary>
 	/// Represents a connection to a remote peer
