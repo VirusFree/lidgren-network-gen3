@@ -59,6 +59,41 @@ namespace Lidgren.Network
 			return best;
 		}
 
+		private static List<NetworkInterface> GetAllNetworkInterfaces()
+		{
+			var computerProperties = IPGlobalProperties.GetIPGlobalProperties();
+			if (computerProperties == null)
+				return null;
+
+			var nics = NetworkInterface.GetAllNetworkInterfaces();
+			if (nics == null || nics.Length < 1)
+				return null;
+
+			var ifaces = new List<NetworkInterface>();
+			foreach (NetworkInterface adapter in nics)
+			{
+				if (adapter.NetworkInterfaceType == NetworkInterfaceType.Loopback || adapter.NetworkInterfaceType == NetworkInterfaceType.Unknown)
+					continue;
+				if (!adapter.Supports(NetworkInterfaceComponent.IPv4))
+					continue;
+				if (adapter.OperationalStatus != OperationalStatus.Up)
+					continue;
+
+				// make sure this adapter has any ipv4 addresses
+				IPInterfaceProperties properties = adapter.GetIPProperties();
+				foreach (UnicastIPAddressInformation unicastAddress in properties.UnicastAddresses)
+				{
+					if (unicastAddress != null && unicastAddress.Address != null && unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+					{
+						// Yes it does, return this network interface.
+						ifaces.Add(adapter);
+					}
+				}
+			}
+			return ifaces;
+		}
+
+
 		/// <summary>
 		/// If available, returns the bytes of the physical (MAC) address for the first usable network interface
 		/// </summary>
@@ -74,7 +109,7 @@ namespace Lidgren.Network
 		{
 			var ni = GetNetworkInterface();
 			if (ni == null)
-				return null;
+				return IPAddress.Broadcast;
 
 			var properties = ni.GetIPProperties();
 			foreach (UnicastIPAddressInformation unicastAddress in properties.UnicastAddresses)
@@ -97,6 +132,37 @@ namespace Lidgren.Network
 				}
 			}
 			return IPAddress.Broadcast;
+		}
+
+
+		public static List<IPAddress> GetAllBroadcastAddress()
+		{
+			var addressed = new List<IPAddress>() { IPAddress.Broadcast };
+			foreach (var ni in GetAllNetworkInterfaces())
+				if (ni != null)
+				{
+					var properties = ni.GetIPProperties();
+					foreach (UnicastIPAddressInformation unicastAddress in properties.UnicastAddresses)
+					{
+						if (unicastAddress != null && unicastAddress.Address != null && unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+						{
+							var mask = unicastAddress.IPv4Mask;
+							byte[] ipAdressBytes = unicastAddress.Address.GetAddressBytes();
+							byte[] subnetMaskBytes = mask.GetAddressBytes();
+
+							if (ipAdressBytes.Length != subnetMaskBytes.Length)
+								throw new ArgumentException("Lengths of IP address and subnet mask do not match.");
+
+							byte[] broadcastAddress = new byte[ipAdressBytes.Length];
+							for (int i = 0; i < broadcastAddress.Length; i++)
+							{
+								broadcastAddress[i] = (byte)(ipAdressBytes[i] | (subnetMaskBytes[i] ^ 255));
+							}
+							addressed.Add(new IPAddress(broadcastAddress));
+						}
+					}
+				}
+			return addressed;
 		}
 
 		/// <summary>
@@ -122,6 +188,32 @@ namespace Lidgren.Network
 			}
 
 			mask = null;
+			return null;
+		}
+
+		/// <summary>
+		/// Gets my local IPv4 address (not necessarily external) and subnet mask
+		/// </summary>
+		public static IPAddress GetMyAddress(IPAddress Gateway)
+		{
+			foreach (var ni in GetAllNetworkInterfaces())
+				if (ni != null)
+				{
+					//examine interface gateway
+					IPInterfaceProperties properties = ni.GetIPProperties();
+					bool validGateway = false;
+					foreach (var niGatewaiAddress in properties.GatewayAddresses)
+						if (Gateway.ToString() == niGatewaiAddress.Address.ToString())
+							validGateway = true;
+
+					//get address
+					if (validGateway)
+						foreach (UnicastIPAddressInformation unicastAddress in properties.UnicastAddresses)
+						{
+							if (unicastAddress != null && unicastAddress.Address != null && unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork)
+								return unicastAddress.Address;
+						}
+				}
 			return null;
 		}
 
