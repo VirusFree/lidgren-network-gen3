@@ -2,10 +2,11 @@
 
 namespace MSCommon
 {
-	public enum MasterServerMessageType
-	{
-		RegisterHost,
-		RequestHostList,
-		RequestIntroduction,
-	}
+    public enum MasterServerMessageType
+    {
+        RegisterHost,
+        RequestHostList,
+        RequestIntroduction,
+        Heil,
+    }
 }

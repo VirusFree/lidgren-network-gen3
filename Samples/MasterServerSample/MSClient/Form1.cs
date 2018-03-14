@@ -9,26 +9,31 @@ using System.Windows.Forms;
 
 namespace MSClient
 {
-	public partial class Form1 : Form
-	{
-		public Form1()
-		{
-			InitializeComponent();
-		}
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
 
-		private void button1_Click(object sender, EventArgs e)
-		{
-			Program.GetServerList(textBox1.Text);
-		}
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Program.GetServerList(textBox1.Text);
+        }
 
-		private void button2_Click(object sender, EventArgs e)
-		{
-			if (comboBox1.SelectedItem == null)
-				return;
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedItem == null)
+                return;
 
-			var splits = comboBox1.SelectedItem.ToString().Split(' ');
-			var host = Int64.Parse(splits[0]);
-			Program.RequestNATIntroduction(host);
-		}
-	}
+            var splits = comboBox1.SelectedItem.ToString().Split(' ');
+            var host = Int64.Parse(splits[0]);
+            Program.RequestNATIntroduction(host);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Program.SendHello();
+        }
+    }
 }

@@ -5,9 +5,9 @@ using System.Text;
 
 namespace MSCommon
 {
-	public static class CommonConstants
-	{
-		public const int MasterServerPort = 14343;
-		public const int GameServerPort = 14242;
-	}
+    public static class CommonConstants
+    {
+        public const int MasterServerPort = 46382;
+        public const int GameServerPort = 14245;
+    }
 }
