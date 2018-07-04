@@ -16,7 +16,7 @@ namespace Phoesion.Network
 		/// <summary>
 		/// Gets the current average roundtrip time in seconds
 		/// </summary>
-		public float AverageRoundtripTime { get { return (float)m_averageRoundtripTime; } }
+		public float AverageRoundtripTime { get { return (float)m_averageRoundtripTime * (IsThroughProxy ? 2 : 1); } }
 
 		/// <summary>
 		/// Time offset between this peer and the remote peer

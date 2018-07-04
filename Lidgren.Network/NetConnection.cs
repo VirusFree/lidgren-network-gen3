@@ -37,10 +37,12 @@ namespace Phoesion.Network
 		private object m_tag;
 		internal NetConnectionStatistics m_statistics;
 
-		/// <summary>
-		/// Gets or sets the application defined object containing data about the connection
-		/// </summary>
-		public object Tag
+        public bool IsThroughProxy = false;
+
+        /// <summary>
+        /// Gets or sets the application defined object containing data about the connection
+        /// </summary>
+        public object Tag
 		{
 			get { return m_tag; }
 			set { m_tag = value; }
